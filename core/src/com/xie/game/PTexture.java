@@ -2,6 +2,7 @@ package com.xie.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class PTexture {
 
-    private List<Texture> textureList;
+    private Array<Texture> textureList;
     private static PTexture pTexture;
 
     private PTexture() {
@@ -29,7 +30,7 @@ public class PTexture {
     }
 
     private void init() {
-        textureList = new ArrayList<Texture>();
+        textureList = new Array<Texture>();
         for (int i = PAI.W1.getCode(); i < PAI.BA.getCode(); i++) {
             Texture texture = new Texture(Gdx.files.internal("item_" + i + ".png"));
             textureList.add(texture);
@@ -52,7 +53,7 @@ public class PTexture {
 
     public void dispose() {
         if (null != textureList) {
-            for (int i = 0; i < textureList.size(); i++) {
+            for (int i = 0; i < textureList.size; i++) {
                 textureList.get(i).dispose();
             }
         }

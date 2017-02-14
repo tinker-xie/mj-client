@@ -31,6 +31,7 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -105,6 +106,11 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile 'com.github.peakgames.libgdx-stagebuilder:stagebuilder-core:v3.19.0'
+        compile group: 'org.apache.mina', name: 'mina-core', version: '2.0.16'
+        compile "com.google.protobuf:protobuf-java:3.1.0"
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
+        compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.22'
     }
 }
 
