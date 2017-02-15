@@ -1,7 +1,6 @@
 package com.xie.game;
 
 import android.os.Bundle;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
@@ -13,6 +12,6 @@ public class AndroidLauncher extends AndroidApplication {
 		config.useAccelerometer = false;
 		config.useCompass = false;
         config.useGyroscope = false;
-		initialize(new MainGame(), config);
+		initialize(new Application(), config);
 	}
 }

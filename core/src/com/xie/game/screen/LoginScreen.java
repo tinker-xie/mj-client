@@ -1,6 +1,5 @@
 package com.xie.game.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
@@ -9,7 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.xie.game.Application;
+import com.xie.game.mina.bean.User;
+import com.xie.game.mina.msg.BaseResponse;
+import com.xie.game.mina.msg.MinaMessage;
+import com.xie.game.mina.net.MyNioSocketConnectorListener;
 import com.xie.game.utils.GlobalPreferences;
+import com.xie.game.utils.NetManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Author xie
@@ -17,22 +24,25 @@ import com.xie.game.utils.GlobalPreferences;
  */
 public class LoginScreen extends BaseScreen {
     private static final String KEY_USERNAME = "KEY_USERNAME";
+    private static final String KEY_PASSWORD = "KEY_PASSWORD";
+    private final Logger LOGGER = LoggerFactory.getLogger(LoginScreen.class);
     private Camera camera;
 
     private Stage stage;
 
-    public LoginScreen(final Game game) {
+    public LoginScreen(final Application game) {
         super(game);
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        Label nameLabel = new Label("Name:", skin);
-        final TextField nameText = new TextField("", skin);
-        nameText.setText(GlobalPreferences.getInstance().getString(KEY_USERNAME));
-        Label addressLabel = new Label("Address:", skin);
-        TextField addressText = new TextField("", skin);
+        Label nameLabel = new Label("User:", skin);
+        final TextField usernameText = new TextField("", skin);
+        usernameText.setText(GlobalPreferences.getInstance().getString(KEY_USERNAME));
+        Label passwordLabel = new Label("Password:", skin);
+        final TextField passwordText = new TextField("", skin);
+        passwordText.setText(GlobalPreferences.getInstance().getString(KEY_PASSWORD));
 
         Table table = new Table();
         table.setFillParent(true);
@@ -40,31 +50,60 @@ public class LoginScreen extends BaseScreen {
         stage.addActor(table);
 
         table.add(nameLabel);
-        table.add(nameText).width(150);
+        table.add(usernameText).width(150);
         table.row().pad(10);
-        table.add(addressLabel);
-        table.add(addressText).width(150);
+        table.add(passwordLabel);
+        table.add(passwordText).width(150);
         table.row().pad(10);
 
-        TextButton register = new TextButton("register", skin);
+        final TextButton register = new TextButton("register", skin);
         register.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                if (nameText.getText().isEmpty()) {
+                if (usernameText.getText().isEmpty() || passwordText.getText().isEmpty()) {
                     new Dialog("Error", skin, "dialog") {
                         protected void result(Object object) {
                             System.out.println("Chosen: " + object);
                         }
-                    }.text("insert a name! ")
-                            .button("OK", true)
-                            .key(Input.Keys.ANY_KEY, true)
-                            .show(stage);
-                } else {
-                    GlobalPreferences.getInstance().putString(KEY_USERNAME, nameText.getText());
-                    GlobalPreferences.getInstance().flush();
-                    game.setScreen(new MainScreen(game));
+                    }.text("Username or password is null.")
+                            .button("Yes", true)
+                            .key(Input.Keys.ENTER, true)
+                            .key(Input.Keys.ESCAPE, false).show(stage);
+                    return false;
                 }
+                GlobalPreferences.getInstance().putString(KEY_USERNAME, usernameText.getText());
+                GlobalPreferences.getInstance().putString(KEY_PASSWORD, passwordText.getText());
+                GlobalPreferences.getInstance().flush();
+                User user = new User();
+                user.setName(usernameText.getText());
+                user.setPassword(passwordText.getText());
+                MinaMessage.Message.Builder builder = MinaMessage.Message.newBuilder();
+                builder.setType(MinaMessage.Type.REQUEST);
+                builder.setId(NetManager.MSG_USER_LOGIN);
+                builder.setData(game.json.toJson(user));
+                game.myNioSocketConnector.send(builder.build(), new MyNioSocketConnectorListener() {
+                    @Override
+                    public void onSuccess(String message) {
 
+                        BaseResponse response = game.json.fromJson(BaseResponse.class, message);
+                        if (response.getCode() == BaseResponse.SUCCESS_CODE) {
+                            game.setScreen(game.mainScreen);
+                        } else {
+                            new Dialog("Error", skin, "dialog") {
+                                protected void result(Object object) {
+                                }
+                            }.text("login in failed")
+                                    .button("Ok", true)
+                                    .key(Input.Keys.ENTER, true)
+                                    .key(Input.Keys.ESCAPE, false).show(stage);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
                 return false;
             }
         });

@@ -4,11 +4,15 @@ package com.xie.game.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.xie.game.PAI;
@@ -26,6 +30,8 @@ public class MainScreen extends BaseScreen {
     private SpriteBatch batch;
     private Stage stage;
     private PActor actor;
+    private Image image;
+
 
     public MainScreen(Game game) {
         super(game);
@@ -38,6 +44,7 @@ public class MainScreen extends BaseScreen {
         stage = new Stage(stretchViewport);
 
         batch = new SpriteBatch();
+
 
     }
 
@@ -55,7 +62,19 @@ public class MainScreen extends BaseScreen {
         float h = PTexture.getInstance().getTextureByCode(PAI.B1).getHeight();
         float scale = 2;
         for (int k = 0; k < 5; k++) {
-            batch.draw(PTexture.getInstance().getTextureByCode(k + 9), 10 + k * w / scale, 10, w / scale, h / scale);
+            Texture texture = PTexture.getInstance().getTextureByCode(k + 9);
+            batch.draw(texture, 10 + k * w / scale, 10, w / scale, h / scale);
+            if (image == null) {
+                image = new Image(texture);
+                image.addListener(new InputListener() {
+
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        System.out.println("x==   " + x);
+                        return true;
+                    }
+                });
+            }
         }
         batch.end();
 
