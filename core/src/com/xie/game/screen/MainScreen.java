@@ -120,7 +120,7 @@ public class MainScreen extends BaseScreen {
         float left = getCenter(WORLD_WIDTH, w * 11);
         if (null != array) {
             for (int k = 0; k < array.size; k++) {
-                Texture texture = PTexture.getInstance().getTextureByCode((int) ((float) array.get(k)));
+                Texture texture = PTexture.getInstance().getTextureByCode(((Float) array.get(k)).intValue());
                 batch.draw(texture, left + k * w, 88, w, h);
             }
         }

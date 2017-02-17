@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class MessageDispatch {
 
-    private List<BaseScreen> screenList = new ArrayList<>();
+    private List<BaseScreen> screenList = new ArrayList<BaseScreen>();
 
     public List<BaseScreen> getScreenList() {
         return screenList;
