@@ -10,7 +10,7 @@ public interface MinaMessageProcessor {
 
     boolean canHandle(MinaMessage.Type type);
 
-    boolean onCMD(int id, String data);
+    boolean onCOMMAND(int id, String data);
 
     boolean onMSG(int id, String data);
 

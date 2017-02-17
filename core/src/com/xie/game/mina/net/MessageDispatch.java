@@ -30,7 +30,7 @@ public class MessageDispatch {
                     isHandled = false;
                     switch (message.getType()) {
                         case COMMAND:
-                            isHandled = screenList.get(i).onCMD(message.getId(), message.getData());
+                            isHandled = screenList.get(i).onCOMMAND(message.getId(), message.getData());
                             break;
                         case RESPONSE:
                             isHandled = screenList.get(i).onMSG(message.getId(), message.getData());

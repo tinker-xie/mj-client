@@ -30,10 +30,10 @@ public class LoginScreen extends BaseScreen {
 
     private Stage stage;
 
-    public LoginScreen(final Application game) {
-        super(game);
+    public LoginScreen(final Application application) {
+        super(application);
 
-        game.messageDispatch.getScreenList().add(this);
+        application.messageDispatch.getScreenList().add(this);
 
         stage = new Stage();
 
@@ -81,8 +81,8 @@ public class LoginScreen extends BaseScreen {
                 MinaMessage.Message.Builder builder = MinaMessage.Message.newBuilder();
                 builder.setType(MinaMessage.Type.REQUEST);
                 builder.setId(NetManager.MSG_USER_LOGIN);
-                builder.setData(game.json.toJson(user));
-                game.myNioSocketConnector.send(builder.build());
+                builder.setData(application.json.toJson(user));
+                application.myNioSocketConnector.send(builder.build());
                 return false;
             }
         });

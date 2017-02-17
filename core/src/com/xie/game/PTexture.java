@@ -4,17 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @Author xie
  * @Date 17/2/12 下午3:43.
  */
 public class PTexture {
 
-    private Array<Texture> textureList;
     private static PTexture pTexture;
+    private Array<Texture> textureList;
 
     private PTexture() {
         this.init();
@@ -31,14 +28,14 @@ public class PTexture {
 
     private void init() {
         textureList = new Array<Texture>();
-        for (int i = PAI.W1.getCode(); i < PAI.BA.getCode(); i++) {
+        for (int i = PAI.B1.getCode(); i < PAI.BA.getCode(); i++) {
             Texture texture = new Texture(Gdx.files.internal("item_" + i + ".png"));
             textureList.add(texture);
         }
     }
 
     public Texture getTextureByCode(int code) {
-        if (code >= PAI.W1.getCode() && code <= PAI.BA.getCode()) {
+        if (code >= PAI.B1.getCode() && code <= PAI.BA.getCode()) {
             return textureList.get(code);
         }
         return null;

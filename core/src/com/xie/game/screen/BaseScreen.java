@@ -22,7 +22,7 @@ public abstract class BaseScreen implements Screen, MinaMessageProcessor {
     }
 
     @Override
-    public boolean onCMD(int id, String data) {
+    public boolean onCOMMAND(int id, String data) {
         return false;
     }
 
