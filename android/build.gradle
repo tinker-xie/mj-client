@@ -24,7 +24,7 @@ android {
 
     }
     defaultConfig {
-        applicationId "com.xie.game"
+        applicationId "com.xie.application"
         minSdkVersion 8
         targetSdkVersion 23
     }
@@ -77,7 +77,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.xie.game/com.xie.game.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.xie.application/com.xie.application.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.

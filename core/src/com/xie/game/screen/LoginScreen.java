@@ -12,7 +12,6 @@ import com.xie.game.Application;
 import com.xie.game.mina.bean.User;
 import com.xie.game.mina.msg.BaseResponse;
 import com.xie.game.mina.msg.MinaMessage;
-import com.xie.game.mina.net.MyNioSocketConnectorListener;
 import com.xie.game.utils.GlobalPreferences;
 import com.xie.game.utils.NetManager;
 import org.slf4j.Logger;
@@ -27,15 +26,18 @@ public class LoginScreen extends BaseScreen {
     private static final String KEY_PASSWORD = "KEY_PASSWORD";
     private final Logger LOGGER = LoggerFactory.getLogger(LoginScreen.class);
     private Camera camera;
+    private Skin skin;
 
     private Stage stage;
 
     public LoginScreen(final Application game) {
         super(game);
 
+        game.messageDispatch.getScreenList().add(this);
+
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         Label nameLabel = new Label("User:", skin);
         final TextField usernameText = new TextField("", skin);
@@ -80,30 +82,7 @@ public class LoginScreen extends BaseScreen {
                 builder.setType(MinaMessage.Type.REQUEST);
                 builder.setId(NetManager.MSG_USER_LOGIN);
                 builder.setData(game.json.toJson(user));
-                game.myNioSocketConnector.send(builder.build(), new MyNioSocketConnectorListener() {
-                    @Override
-                    public void onSuccess(String message) {
-
-                        BaseResponse response = game.json.fromJson(BaseResponse.class, message);
-                        if (response.getCode() == BaseResponse.SUCCESS_CODE) {
-                            game.setScreen(game.mainScreen);
-                        } else {
-                            new Dialog("Error", skin, "dialog") {
-                                protected void result(Object object) {
-                                }
-                            }.text("login in failed")
-                                    .button("Ok", true)
-                                    .key(Input.Keys.ENTER, true)
-                                    .key(Input.Keys.ESCAPE, false).show(stage);
-                        }
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
+                game.myNioSocketConnector.send(builder.build());
                 return false;
             }
         });
@@ -127,6 +106,35 @@ public class LoginScreen extends BaseScreen {
     }
 
     @Override
+    public boolean canHandle(MinaMessage.Type type) {
+        if (type.equals(MinaMessage.Type.RESPONSE)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onMSG(int id, String data) {
+        switch (id) {
+            case NetManager.MSG_USER_LOGIN:
+                BaseResponse response = application.json.fromJson(BaseResponse.class, data);
+                if (response.getCode() == BaseResponse.SUCCESS_CODE) {
+                    application.changeScreen(Application.SCREEN_MAIN);
+                } else {
+                    new Dialog("Error", skin, "dialog") {
+                        protected void result(Object object) {
+                        }
+                    }.text("login in failed")
+                            .button("Ok", true)
+                            .key(Input.Keys.ENTER, true)
+                            .key(Input.Keys.ESCAPE, false).show(stage);
+                }
+                break;
+        }
+        return true;
+    }
+
+    @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -136,7 +144,7 @@ public class LoginScreen extends BaseScreen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

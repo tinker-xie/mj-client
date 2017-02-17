@@ -31,6 +31,8 @@ public class NetManager {
     public static final int CMD_SEND_CARDS = 10018;
     public static final int CMD_SEND_CURRENTID_CARDS = 10019;
     public static final int CMD_HOST_SEND_CARDS_COMPUTER = 10020;
+
+
     public static final int MSG_USER_LOGIN = 20000;
     public static final int MSG_USER_LOGOUT = 20001;
     public static final int MSG_UPDATE_ROOM = 20002;
@@ -41,6 +43,8 @@ public class NetManager {
     public static final int MSG_UPDATE_LANDLORDHEAD = 20006;
     public static final int MSG_SEND_CARDS = 20007;
     public static final int MSG_FLUSH_CARDS = 20008;
+
+
     public static final String SERVER_HOST = "127.0.0.1";// 服务器
     public static final int SERVER_PORT = 9001;// 发送端口
     public static final int LOCAL_PORT = 2345;// 接收端口

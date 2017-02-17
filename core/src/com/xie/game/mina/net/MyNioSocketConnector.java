@@ -27,10 +27,10 @@ public class MyNioSocketConnector {
     private MessageDispatch messageDispatch;
 
 
-    public MyNioSocketConnector() {
+    public MyNioSocketConnector(MessageDispatch messageDispatch) {
         connector = new NioSocketConnector();
         connector.setDefaultLocalAddress(new InetSocketAddress(NetManager.LOCAL_PORT));
-        messageDispatch = new MessageDispatch();
+        messageDispatch = messageDispatch;
 //        connector.getFilterChain().addLast("logger", new LoggingFilter());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MinaProtobufEncoder(), new MinaProtobufDecoder())); //设置编码过滤器
         connector.getFilterChain().addLast("keepAliveFilter", new KeepAliveFilter(new MyKeepAliveMessageFactory()));
@@ -46,10 +46,7 @@ public class MyNioSocketConnector {
 
     }
 
-    public void send(MinaMessage.Message message, MyNioSocketConnectorListener myNioSocketConnectorListener) {
-        if (null != myNioSocketConnectorListener) {
-            messageDispatch.add(message.getId(), myNioSocketConnectorListener);
-        }
+    public void send(MinaMessage.Message message) {
         ioSession.write(message);
     }
 

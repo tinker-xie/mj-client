@@ -18,7 +18,7 @@ public final class MinaMessage {
                         " \002(\0162\005.Type:\005HEART\022\n\n\002id\030\002 \002(\005\022\014\n\004data\030\003" +
                         " \001(\t*T\n\004Type\022\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002\022" +
                         "\013\n\007COMMAND\020\003\022\016\n\nINDICATION\020\004\022\t\n\005HEART\020\005\022" +
-                        "\t\n\005OTHER\020\006B$\n\025com.xie.game.mina.msgB\013Min" +
+                        "\t\n\005OTHER\020\006B$\n\025com.xie.application.mina.msgB\013Min" +
                         "aMessage"
         };
         com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
@@ -665,7 +665,7 @@ public final class MinaMessage {
             private int id_;
             private java.lang.Object data_ = "";
 
-            // Construct using com.xie.game.mina.msg.MinaMessage.Message.newBuilder()
+            // Construct using com.xie.application.mina.msg.MinaMessage.Message.newBuilder()
             private Builder() {
                 maybeForceBuilderInitialization();
             }

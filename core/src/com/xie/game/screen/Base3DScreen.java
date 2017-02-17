@@ -1,6 +1,5 @@
 package com.xie.game.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,23 +10,22 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.xie.game.Application;
 
 /**
  * @Author xie
  * @Date 17/2/14 上午8:41.
  */
 public class Base3DScreen extends BaseScreen {
-    private PerspectiveCamera cam;
-
     public CameraInputController camController;
-
+    private PerspectiveCamera cam;
     private Environment environment;
 
     private ModelBatch modelBatch;
     private Model model;
     private ModelInstance instance;
 
-    public Base3DScreen(Game game) {
+    public Base3DScreen(Application game) {
         super(game);
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(10f, 10f, 10f);
@@ -37,7 +35,7 @@ public class Base3DScreen extends BaseScreen {
         cam.update();
 
         camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(camController);
+
 
         modelBatch=new ModelBatch();
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -53,7 +51,7 @@ public class Base3DScreen extends BaseScreen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(camController);
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.xie.game.mina.net;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.xie.game.mina.msg.MinaMessage;
+import com.xie.game.screen.BaseScreen;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author xie
@@ -8,33 +12,42 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MessageDispatch {
 
-    private ConcurrentHashMap<Integer, MyNioSocketConnectorListener> messageHandlers;
+    private List<BaseScreen> screenList = new ArrayList<>();
 
-    public MessageDispatch() {
-        messageHandlers = new ConcurrentHashMap<Integer, MyNioSocketConnectorListener>();
+    public List<BaseScreen> getScreenList() {
+        return screenList;
     }
 
-    public boolean add(Integer id, MyNioSocketConnectorListener listener) {
-        if (messageHandlers.containsKey(id)) {
-            return false;
+    public void setScreenList(List<BaseScreen> screenList) {
+        this.screenList = screenList;
+    }
+
+    public void dispatch(MinaMessage.Message message) {
+        boolean isHandled = false;
+        if (screenList != null && screenList.size() > 0) {
+            for (int i = 0; i < screenList.size(); i++) {
+                if (screenList.get(i).canHandle(message.getType())) {
+                    isHandled = false;
+                    switch (message.getType()) {
+                        case COMMAND:
+                            isHandled = screenList.get(i).onCMD(message.getId(), message.getData());
+                            break;
+                        case RESPONSE:
+                            isHandled = screenList.get(i).onMSG(message.getId(), message.getData());
+                            break;
+                        case INDICATION:
+                            isHandled = screenList.get(i).onINDICATION(message.getId(), message.getData());
+                            break;
+                        case OTHER:
+                            isHandled = screenList.get(i).onOTHER(message.getId(), message.getData());
+                            break;
+                    }
+                    if (isHandled) {
+                        break;
+                    }
+                }
+            }
         } else {
-            messageHandlers.put(id, listener);
-            return true;
-        }
-    }
-
-    public boolean remove(Integer id) {
-        if (messageHandlers.containsKey(id)) {
-            messageHandlers.remove(id);
-            return true;
-        }
-        return false;
-    }
-
-    public void dispatch(Integer id, String data) {
-        if (messageHandlers.containsKey(id)) {
-            messageHandlers.get(id).onSuccess(data);
-        }else{
             System.out.println("message not dispatch!");
         }
     }

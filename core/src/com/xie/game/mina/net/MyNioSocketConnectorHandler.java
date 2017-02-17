@@ -29,10 +29,7 @@ public class MyNioSocketConnectorHandler extends IoHandlerAdapter {
     public void messageReceived(IoSession session, Object message)
             throws Exception {
         MinaMessage.Message msg = (MinaMessage.Message) message;
-        if (msg.getType().equals(MinaMessage.Type.RESPONSE) || msg.getType().equals(MinaMessage.Type.COMMAND) || msg.getType().equals(MinaMessage.Type.INDICATION)) {
-            messageDispatch.dispatch(msg.getId(), msg.getData());
-        }
-
+        messageDispatch.dispatch(msg);
     }
 
     @Override

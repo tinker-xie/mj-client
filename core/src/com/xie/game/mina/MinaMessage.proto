@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-option java_package = "com.xie.game.mina.msg";
+option java_package = "com.xie.application.mina.msg";
 
 option java_outer_classname = "MinaMessage";
 
