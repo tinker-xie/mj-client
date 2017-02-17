@@ -80,7 +80,7 @@ public class LoginScreen extends BaseScreen {
                 user.setPassword(passwordText.getText());
                 MinaMessage.Message.Builder builder = MinaMessage.Message.newBuilder();
                 builder.setType(MinaMessage.Type.REQUEST);
-                builder.setId(NetManager.MSG_USER_LOGIN);
+                builder.setId(NetManager.MSG_USER_REGISTER);
                 builder.setData(application.json.toJson(user));
                 application.myNioSocketConnector.send(builder.build());
                 return false;
@@ -90,13 +90,29 @@ public class LoginScreen extends BaseScreen {
         TextButton login = new TextButton("login", skin);
         login.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                new Dialog("Some Dialog", skin, "dialog") {
-                    protected void result(Object object) {
-                        System.out.println("Chosen: " + object);
-                    }
-                }.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Input.Keys.ENTER, true)
-                        .key(Input.Keys.ESCAPE, false).show(stage);
-
+                if (usernameText.getText().isEmpty() || passwordText.getText().isEmpty()) {
+                    new Dialog("Error", skin, "dialog") {
+                        protected void result(Object object) {
+                            System.out.println("Chosen: " + object);
+                        }
+                    }.text("Username or password is null.")
+                            .button("Yes", true)
+                            .key(Input.Keys.ENTER, true)
+                            .key(Input.Keys.ESCAPE, false).show(stage);
+                    return false;
+                }
+                GlobalPreferences.getInstance().putString(KEY_USERNAME, usernameText.getText());
+                GlobalPreferences.getInstance().putString(KEY_PASSWORD, passwordText.getText());
+                GlobalPreferences.getInstance().flush();
+                User user = new User();
+                user.setName(usernameText.getText());
+                user.setPassword(passwordText.getText());
+                MinaMessage.Message.Builder builder = MinaMessage.Message.newBuilder();
+                builder.setType(MinaMessage.Type.REQUEST);
+                builder.setId(NetManager.MSG_USER_LOGIN);
+                builder.setData(application.json.toJson(user));
+                application.setUser(user);
+                application.myNioSocketConnector.send(builder.build());
                 return false;
             }
         });
@@ -116,7 +132,7 @@ public class LoginScreen extends BaseScreen {
     @Override
     public boolean onMSG(int id, String data) {
         switch (id) {
-            case NetManager.MSG_USER_LOGIN:
+            case NetManager.MSG_USER_REGISTER:
                 BaseResponse response = application.json.fromJson(BaseResponse.class, data);
                 if (response.getCode() == BaseResponse.SUCCESS_CODE) {
                     application.changeScreen(Application.SCREEN_MAIN);
@@ -124,7 +140,21 @@ public class LoginScreen extends BaseScreen {
                     new Dialog("Error", skin, "dialog") {
                         protected void result(Object object) {
                         }
-                    }.text("login in failed")
+                    }.text(response.getMsg())
+                            .button("Ok", true)
+                            .key(Input.Keys.ENTER, true)
+                            .key(Input.Keys.ESCAPE, false).show(stage);
+                }
+                break;
+            case NetManager.MSG_USER_LOGIN:
+                BaseResponse response_login = application.json.fromJson(BaseResponse.class, data);
+                if (response_login.getCode() == BaseResponse.SUCCESS_CODE) {
+                    application.changeScreen(Application.SCREEN_MAIN);
+                } else {
+                    new Dialog("Error", skin, "dialog") {
+                        protected void result(Object object) {
+                        }
+                    }.text(response_login.getMsg())
                             .button("Ok", true)
                             .key(Input.Keys.ENTER, true)
                             .key(Input.Keys.ESCAPE, false).show(stage);

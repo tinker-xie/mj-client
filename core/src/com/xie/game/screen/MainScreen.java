@@ -10,15 +10,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.xie.game.Application;
 import com.xie.game.PTexture;
 import com.xie.game.mina.msg.BaseResponse;
+import com.xie.game.mina.msg.GameFrame;
 import com.xie.game.mina.msg.MinaMessage;
 import com.xie.game.utils.AssetManager;
 import com.xie.game.utils.NetManager;
@@ -36,6 +35,11 @@ public class MainScreen extends BaseScreen {
     private Image image;
     private Skin skin;
     private Array array;
+    private Table table;
+    private TextButton btn_throw;
+    private TextButton btn_gang;
+    private TextButton btn_peng;
+    private GameFrame gameFrame;
 
     private AssetManager assetManager = new AssetManager();
 
@@ -45,9 +49,12 @@ public class MainScreen extends BaseScreen {
         application.messageDispatch.getScreenList().add(this);
 
         Viewport stretchViewport = new FillViewport(WORLD_WIDTH, WORLD_HEIGHT);
-
         // 使用指定的视口创建舞台, 舞台的宽高为视口世界的宽高
+        table = new Table();
+        table.setFillParent(true);
+        table.setPosition(100, 100);
         stage = new Stage(stretchViewport);
+        stage.addActor(table);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 
@@ -61,8 +68,13 @@ public class MainScreen extends BaseScreen {
         });
 
         batch = new SpriteBatch();
-
-
+        btn_throw = new TextButton("throw", skin);
+        btn_gang = new TextButton("gang", skin);
+        btn_peng = new TextButton("peng", skin);
+        table.add(btn_gang).width(40).height(15);
+        table.add(btn_peng).width(40).height(15);
+        table.add(btn_throw).width(40).height(15);
+        table.row();
     }
 
     @Override
@@ -75,12 +87,28 @@ public class MainScreen extends BaseScreen {
 
     @Override
     public boolean onCOMMAND(int id, String data) {
+        BaseResponse response = application.json.fromJson(BaseResponse.class, data);
         switch (id) {
             case NetManager.CMD_BEGIN_CARDS:
-                BaseResponse response = application.json.fromJson(BaseResponse.class, data);
+                if (response.getCode() == BaseResponse.SUCCESS_CODE) {
+                    System.out.println(response.getData());
+                    array = application.json.fromJson(Array.class, response.getData());
+                } else {
+                    new Dialog("Error", skin, "dialog") {
+                        protected void result(Object object) {
+                        }
+                    }.text("login in failed")
+                            .button("Ok", true)
+                            .key(Input.Keys.ENTER, true)
+                            .key(Input.Keys.ESCAPE, false).show(stage);
+                }
+                break;
+
+            case NetManager.CMD_CREATE_ROOM:
                 if (response.getCode() == BaseResponse.SUCCESS_CODE) {
 
-                    array = (com.badlogic.gdx.utils.Array) response.getData();
+                    gameFrame = application.json.fromJson(GameFrame.class, response.getData());
+                    System.out.println(gameFrame);
                 } else {
                     new Dialog("Error", skin, "dialog") {
                         protected void result(Object object) {
@@ -99,11 +127,10 @@ public class MainScreen extends BaseScreen {
     public void show() {
 
         Gdx.input.setInputProcessor(stage);
-
-
         MinaMessage.Message.Builder builder = MinaMessage.Message.newBuilder();
         builder.setType(MinaMessage.Type.REQUEST);
-        builder.setId(NetManager.CMD_BEGIN_CARDS);
+        builder.setId(NetManager.CMD_CREATE_ROOM);
+        builder.setData(application.json.toJson(application.getUser()));
         application.myNioSocketConnector.send(builder.build());
     }
 
@@ -133,14 +160,14 @@ public class MainScreen extends BaseScreen {
         float bottom = getCenter(WORLD_HEIGHT, h2 * 11);
         for (int k = 0; k < 11; k++) {
 
-            batch.draw(texture, 200, bottom + k * h2, w2, h2);
+            batch.draw(texture, 250, bottom + k * h2, w2, h2);
         }
 
         TextureRegion textureRegion = new TextureRegion(texture);
         textureRegion.flip(true, false);
         for (int k = 0; k < 11; k++) {
 
-            batch.draw(textureRegion, 600, bottom + k * h2, w2, h2);
+            batch.draw(textureRegion, 550, bottom + k * h2, w2, h2);
         }
         batch.end();
 

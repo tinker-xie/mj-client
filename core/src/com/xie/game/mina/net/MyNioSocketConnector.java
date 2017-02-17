@@ -42,8 +42,6 @@ public class MyNioSocketConnector {
         } else {
             logger.error("network is not avaiable!");
         }
-
-
     }
 
     public void send(MinaMessage.Message message) {

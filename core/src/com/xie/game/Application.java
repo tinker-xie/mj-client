@@ -3,6 +3,7 @@ package com.xie.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
+import com.xie.game.mina.bean.User;
 import com.xie.game.mina.net.MessageDispatch;
 import com.xie.game.mina.net.MyNioSocketConnector;
 import com.xie.game.screen.Base3DScreen;
@@ -30,6 +31,8 @@ public class Application extends Game {
     private MainScreen mainScreen;
     private Base3DScreen base3DScreen;
     private Logger logger = LoggerFactory.getLogger(Application.class);
+
+    private User user;
 
     @Override
     public void create() {
@@ -66,6 +69,14 @@ public class Application extends Game {
         json.setUsePrototypes(false);
         json.setIgnoreUnknownFields(true);
         json.setOutputType(JsonWriter.OutputType.json);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

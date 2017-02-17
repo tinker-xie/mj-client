@@ -6,24 +6,23 @@ package com.xie.game.mina.msg;
 public class BaseResponse {
     public final static int SUCCESS_CODE = 0;
     public final static int FAIL_CODE = -1;
-    private final static String SUCCESS_MESSAGE = "ok";
-    private final static String FAIL_MESSAGE = "fail";
+    public final static String SUCCESS_MESSAGE = "ok";
+    public final static String FAIL_MESSAGE = "fail";
 
     private int code;
     private String msg;
-    private Object data;
+    private String data;
 
     public BaseResponse() {
-
     }
 
-    public BaseResponse(int code, String msg, Object data) {
+    public BaseResponse(int code, String msg, String data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
 
-    public static BaseResponse ok(Object data) {
+    public static BaseResponse ok(String data) {
         return new BaseResponse(SUCCESS_CODE, SUCCESS_MESSAGE, data);
     }
 
@@ -31,9 +30,10 @@ public class BaseResponse {
         return new BaseResponse(SUCCESS_CODE, SUCCESS_MESSAGE, null);
     }
 
-    public static BaseResponse fail(Object data) {
-        return new BaseResponse(FAIL_CODE, FAIL_MESSAGE, data);
+    public static BaseResponse fail(String data) {
+        return new BaseResponse(SUCCESS_CODE, FAIL_MESSAGE, data);
     }
+
 
     public static BaseResponse fail() {
         return new BaseResponse(FAIL_CODE, FAIL_MESSAGE, null);
@@ -55,11 +55,11 @@ public class BaseResponse {
         this.msg = msg;
     }
 
-    public Object getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(String data) {
         this.data = data;
     }
 }
